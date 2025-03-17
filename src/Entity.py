@@ -3,7 +3,7 @@ from Spritesheet import Spritesheet
 
 
 class Entity:
-    def __init__(self, position, size, spritesheets, hp):
+    def __init__(self, position, size, spritesheets, hp=100):
         self.position = position    # Vector Instance
         self.size = size
         self.velocity = Vector()
@@ -28,7 +28,10 @@ class Entity:
     def take_damage(self, damage):
         self.hp -= damage
         if self.hp <= 0:
-            self.alive = False
+            self.die()
+
+    def die(self):
+        self.alive = False
 
     def heal(self, amount):
         self.hp += amount
@@ -41,3 +44,9 @@ class Entity:
             return
 
         self.state = state
+
+    def attack(self):
+        if "attacking" in self.animations:
+            self.state = "attacking"
+        else:
+            print("This entity cannot attack")

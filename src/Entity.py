@@ -3,24 +3,46 @@ from Spritesheet import Spritesheet
 
 
 class Entity:
-    def __init__(self, position, size, spritesheets, hp=100):
+    def __init__(self, position, size, animations, hp=100):
         self.position = position    # Vector Instance
         self.size = size
         self.velocity = Vector()
-        self.direction = 1      # 1 to face right, -1 to face left
+        self.direction = 1      # 1 = right, -1 = left
 
         self.hp = hp
         self.max_hp = hp
         self.alive = True
-        self.state = "idle"     # Could also be "running" and "attacking"
-        self.animations = {}    # Will store the processed Spritesheets for each state
-        for filename in spritesheets:
-            if "idle" in filename:
-                self.animations["idle"] = Spritesheet(filename)
-            elif "running" in filename:
-                self.animations["running"] = Spritesheet(filename)
-            elif "attacking" in filename:
-                self.animations["attacking"] = Spritesheet(filename)
+        
+        self.animations = {}
+        self.current_animation = "idle"
+        self.animation_frame = 0
+        self.animation_timer = 0
+        
+        for state, config in animations.items():
+            self.animations[state] = Spritesheet(
+                filename=config["path"],
+                frame_size=config["frame_size"],
+                frame_count=config["frame_count"],
+                columns=config.get("columns", 0)
+            )
+
+    def set_animation(self, state):
+        if state != self.current_animation:
+            self.current_animation = state
+            self.animation_frame = 0
+            self.animation_timer = 0
+
+    def update_animation(self, delta_time):
+        if self.current_animation not in self.animations:
+            return
+        
+        anim = self.animations[self.current_animation]
+        self.animation_timer += delta_time
+        
+        if self.animation_timer > 0.1:  
+            self.animation_timer = 0
+            self.animation_frame = (self.animation_frame + 1) % anim.frame_count
+
 
     def move(self, distance):
         self.position.add(self.velocity)
@@ -50,3 +72,12 @@ class Entity:
             self.state = "attacking"
         else:
             print("This entity cannot attack")
+
+    def update_animation(self, delta_time):
+        self.animation_timer += delta_time
+        frame_duration = 0.1  # 100ms per frame
+    
+        if self.animation_timer > frame_duration:
+            self.animation_timer = 0
+            self.animation_frame = (self.animation_frame + 1) % \
+                              self.animations[self.current_animation].frame_count

@@ -4,10 +4,9 @@ from Spritesheet import Spritesheet
 
 class Entity:
     def __init__(self, position, size, animations, hp=100):
-        self.position = position  # Vector Instance
+        self.position = position
         self.size = size
         self.velocity = Vector()
-        self.direction = 1  # 1 = right, -1 = left
 
         self.hp = hp
         self.max_hp = hp

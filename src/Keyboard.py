@@ -27,9 +27,9 @@ class Keyboard:
 
     def keyUp(self, key):
         if key == simplegui.KEY_MAP['d']:
-            self.player.velocity = Vector(0, 0)
+            self.player.velocity.x = 0
         if key == simplegui.KEY_MAP['a']:
-            self.player.velocity = Vector(0, 0)
+            self.player.velocity.y = 0
 
         if key == simplegui.KEY_MAP['space']:
             self.space_pressed = False

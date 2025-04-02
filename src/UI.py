@@ -24,10 +24,10 @@ class UI:
         self._load_assets()
         
     def _load_assets(self):
-        self.tile = simplegui.load_image("https://i.imgur.com/ZFp2uUg.png")
-        self.scoreboard = simplegui.load_image("https://i.imgur.com/TzglCC4.png")
-        self.healthbar = simplegui.load_image("https://i.imgur.com/Yc0HiCQ.png")
-        self.background = simplegui.load_image("https://i.imgur.com/qmxkE9B.png")
+        self.tile = simplegui.load_image("assets/tile.png")
+        self.scoreboard = simplegui.load_image("assets/scoreboard1.png")
+        self.healthbar = simplegui.load_image("assets/healthbar.png")
+        self.background = simplegui.load_image("assets/background.png")
 
     def draw(self, canvas):
         canvas.draw_image(self.background, 

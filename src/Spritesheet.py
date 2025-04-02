@@ -1,4 +1,6 @@
-import simplegui
+# import simplegui
+import SimpleGUICS2Pygame.simpleguics2pygame as simplegui
+
 
 class Spritesheet:
     def __init__(self, filename, frame_size, frame_count, columns=0):

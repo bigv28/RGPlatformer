@@ -25,6 +25,10 @@ class Entity:
                 columns=config.get("columns", 0)
             )
 
+    def draw(self):
+        pass
+
+
     def set_animation(self, state):
         if state != self.current_animation:
             self.current_animation = state

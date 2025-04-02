@@ -1,10 +1,9 @@
 #Imports
 import random
-import simplegui
-import Player
-#import PySimpleGUI as simplegui # <-- Use this if you're on VSC, then comment out the one above.
-
-import simplegui
+# import simplegui
+from Player import Player
+from Enemy import Enemy
+import SimpleGUICS2Pygame.simpleguics2pygame as simplegui
 
 class UI:
     def __init__(self, player, entities):
@@ -117,9 +116,8 @@ class UI:
 
     def start(self):
         self.frame.start()
-#ui = UI()
-#ui.start()
 
-if __name__ = "__main__":
+
+if __name__ == "__main__":
     ui = UI()
-    ui.start
+    ui.start()

@@ -1,132 +1,101 @@
 #Imports
-import random
-# import simplegui
+import simplegui
 from Player import Player
 from Enemy import Enemy
-import SimpleGUICS2Pygame.simpleguics2pygame as simplegui
 
 class UI:
-    def __init__(self, player, entities):
-        # Configuration
+    def __init__(self):
+        #Variable Assignment
+
         self.CANVAS_WIDTH = 600
         self.CANVAS_HEIGHT = 400
-        self.player = player
-        self.entities = entities  # List of all drawable entities
         
-        # Game state
+        self.player = player
+        self.player_hp = self.player.hp
+        self.enemy = enemy
+        
+        #Game state
         self.score = 0
         self.gameover = False
         
-        # Setup frame
-        self.frame = simplegui.create_frame("Rogue Platformer", self.CANVAS_WIDTH, self.CANVAS_HEIGHT)
+        self.frame = simplegui.create_frame("G50", self.CANVAS_WIDTH, self.CANVAS_HEIGHT)
         self.frame.set_draw_handler(self.draw)
         
-        # Load assets (local files recommended)
         self._load_assets()
         
     def _load_assets(self):
-        """Load all UI images with local fallbacks"""
-        try:
-            self.healthbar_bg = simplegui.load_image("assets/ui/healthbar_bg.png")
-            self.healthbar_fg = simplegui.load_image("assets/ui/healthbar_fg.png")
-            self.background = simplegui.load_image("assets/backgrounds/level1.png")
-        except:
-            print("Error loading images! Using fallback colors")
-            self.healthbar_bg = None
-            self.healthbar_fg = None
-            self.background = None
+        self.tile = simplegui.load_image("https://i.imgur.com/ZFp2uUg.png")
+        self.scoreboard = simplegui.load_image("https://i.imgur.com/TzglCC4.png")
+        self.healthbar = simplegui.load_image("https://i.imgur.com/Yc0HiCQ.png")
+        self.background = simplegui.load_image("https://i.imgur.com/qmxkE9B.png")
 
     def draw(self, canvas):
-        # Clear screen
-        if self.background:
-            canvas.draw_image(self.background, 
-                             (self.CANVAS_WIDTH//2, self.CANVAS_HEIGHT//2),
-                             (self.CANVAS_WIDTH, self.CANVAS_HEIGHT),
-                             (self.CANVAS_WIDTH//2, self.CANVAS_HEIGHT//2),
-                             (self.CANVAS_WIDTH, self.CANVAS_HEIGHT))
-        else:
-            canvas.draw_polygon([[0,0], [self.CANVAS_WIDTH,0],
-                              [self.CANVAS_WIDTH,self.CANVAS_HEIGHT],
-                              [0,self.CANVAS_HEIGHT]], 1, "Black", "Gray")
+        canvas.draw_image(self.background, 
+                            (self.CANVAS_WIDTH//2, self.CANVAS_HEIGHT//2),
+                            (self.CANVAS_WIDTH, self.CANVAS_HEIGHT),
+                            (self.CANVAS_WIDTH//2, self.CANVAS_HEIGHT//2),
+                            (self.CANVAS_WIDTH, self.CANVAS_HEIGHT))
 
-        # Draw entities
-    def _draw_entity(self, canvas, entity):
-        if entity.current_animation in entity.animations:
-            anim = entity.animations[entity.current_animation]
-            frame_data = anim.get_frame(entity.animation_frame)
-            
-            if frame_data and anim.image:
-                source_center, source_size = frame_data
-                dest_center = (entity.position.x, entity.position.y)
-                dest_size = (entity.size.x * abs(entity.direction), entity.size.y)
-                
-                canvas.draw_image(anim.image, source_center, source_size, dest_center, dest_size)
-
-        # Draw HUD
         self._draw_health(canvas)
         self._draw_score(canvas)
+        self.draw_floor(canvas)
         
-        # Game over overlay
         if self.gameover:
+            text_width = 200
             canvas.draw_text("GAME OVER", 
-                            (self.CANVAS_WIDTH//2 - 150, self.CANVAS_HEIGHT//2),
-                            50, "Red")
-
-    def _draw_entity(self, canvas, entity):
-        """Draw an entity with its current animation frame"""
-        if entity.current_animation in entity.animations:
-            anim = entity.animations[entity.current_animation]
-            frame_data = anim.get_frame(entity.animation_frame)
-            
-            if frame_data and anim.image:
-                canvas.draw_image(
-                    anim.image,
-                    frame_data[0],  # Source center
-                    frame_data[1],  # Source size
-                    (entity.position.x, entity.position.y),  # Dest center
-                    (entity.size.x * abs(entity.direction), entity.size.y)  # Flip based on direction
-                )
+                             (self.CANVAS_WIDTH//2 - text_width//2, self.CANVAS_HEIGHT//2),
+                             50, "White")
 
     def _draw_health(self, canvas):
-        max_hp = self.player.max_hp
-        current_hp = max(0, min(self.player.hp, max_hp))
         
-        # Health bar dimensions
-        bg_width = 158  # Match your healthbar_bg.png size
-        bg_height = 44
-        fg_width = (current_hp / max_hp) * bg_width
-
-        # Draw health bar background
-        if self.healthbar_bg:
-            canvas.draw_image(self.healthbar_bg,
-                            (100, 50), (190, 53),  # Source dimensions
-                            (90, 30), (bg_width, bg_height))
+        healthbar = self.healthbar
+        healthbar_width = healthbar.get_width()
+        healthbar_height = healthbar.get_height()
         
-        # Draw health fill
-        canvas.draw_line((43, 30), 
-                        (43 + fg_width, 30), 
-                        20, "#e31717")
+        canvas.draw_line((43, 30), (self.player_hp * 1.80, 30), 20, "#e31717")  
         
-        # Draw health bar foreground (decorative elements)
-        if self.healthbar_fg:
-            canvas.draw_image(self.healthbar_fg,
-                            (100, 50), (190, 53),
-                            (90, 30), (bg_width, bg_height))
+        canvas.draw_image(healthbar, (healthbar_width / 2,
+                          healthbar_height / 2),
+                          (healthbar_width, healthbar_height),
+                          (100, 30), (healthbar_width*0.9, healthbar_height*0.9))
 
     def _draw_score(self, canvas):
-        canvas.draw_text(f"SCORE: {self.score}", 
-                        (self.CANVAS_WIDTH - 200, 40), 
-                        24, "White", "sans-serif")
+        scoreboard = self.scoreboard
+        canvas.draw_image(scoreboard, (scoreboard.get_width() / 2,
+                          scoreboard.get_height() / 2),
+                          (scoreboard.get_width(), scoreboard.get_height()),
+                          (505, 32), (scoreboard.get_width()*2.5, scoreboard.get_height()*3))
+                          
+        canvas.draw_text(f"SCORE:{self.score}", 
+                         (self.CANVAS_WIDTH - 140, 40), 
+                         24, "White", "monospace")
+        
+    def draw_floor(self, canvas):
+        floor_height = 70
+        floor_color = "Green"
+        tile = self.tile
+        position = (0,self.CANVAS_HEIGHT - floor_height)
+        
+        for i in range(self.CANVAS_WIDTH // 32):
+            canvas.draw_image(tile, (tile.get_width() / 2,
+                              tile.get_height() / 2),
+                              (tile.get_width(), tile.get_height()),
+                              position, (tile.get_width()*2, tile.get_height()*2))
+            position = (position[0] + 64, position[1])
+        
+        canvas.draw_polygon([(0, self.CANVAS_HEIGHT - floor_height), 
+                             (self.CANVAS_WIDTH, self.CANVAS_HEIGHT - floor_height),
+                             (self.CANVAS_WIDTH, self.CANVAS_HEIGHT),
+                             (0, self.CANVAS_HEIGHT)], 
+                             1, "Black", floor_color)
 
     def update_ui(self, new_hp, new_score, is_gameover):
-        self.player.hp = new_hp
+        self.player_hp = new_hp
         self.score = new_score
-        self.gameover = is_gameover  # Fixed variable name
+        self.gameover = is_gameover
 
     def start(self):
         self.frame.start()
 
-
-if __name__ == "__main__":
-    ui = UI()
-    ui.start()
+ui = UI()
+ui.start()

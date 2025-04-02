@@ -50,8 +50,17 @@ class UI:
                               [0,self.CANVAS_HEIGHT]], 1, "Black", "Gray")
 
         # Draw entities
-        for entity in self.entities:
-            self._draw_entity(canvas, entity)
+    def _draw_entity(self, canvas, entity):
+        if entity.current_animation in entity.animations:
+            anim = entity.animations[entity.current_animation]
+            frame_data = anim.get_frame(entity.animation_frame)
+            
+            if frame_data and anim.image:
+                source_center, source_size = frame_data
+                dest_center = (entity.position.x, entity.position.y)
+                dest_size = (entity.size.x * abs(entity.direction), entity.size.y)
+                
+                canvas.draw_image(anim.image, source_center, source_size, dest_center, dest_size)
 
         # Draw HUD
         self._draw_health(canvas)

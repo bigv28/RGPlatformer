@@ -46,7 +46,7 @@ class Entity:
             self.animation_timer = 0
             self.animation_frame = (self.animation_frame + 1) % anim.frame_count
 
-    def move(self, distance):
+    def move(self):
         self.position.add(self.velocity)
         self.set_animation("running")
 
